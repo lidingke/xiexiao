@@ -117,6 +117,7 @@ class ModelPump(ModelCore,QObject):
         print ('get current ',data1, data2)
         if self.timebegin:
             emitresult = self.plotData.emit()
+
             self.emitPlot.emit(emitresult[0],emitresult[1],emitresult[2])
         self.showPower1Data = self._powerStatus(
             self.currentValue1, self.showPower1Data)
@@ -173,6 +174,7 @@ class ModelPump(ModelCore,QObject):
 
     def setSaveStop(self,isture):
         self.startRecord = isture
+        self.plotData.setLogReStart(isture)
         # print('set startRecord:',self.startRecord)
 
     def creatPlot(self,tableName):
@@ -184,6 +186,7 @@ class ModelPump(ModelCore,QObject):
         print('get ti0:', self.timebegin, 'init tabel username', self.username)
         self.datahand.initSqltabel(self.timebegin, self.username)
         self.beginPlot.emit(True)
+        # self.plotData.setLogReStart(True)
 
     def setStartTime(self,begintime, steptime):
         self.timebegin = begintime
@@ -211,48 +214,74 @@ class plotDataContainer(object):
         super(plotDataContainer, self).__init__()
         self.dynamicAxis = ([],[],[])
         self.loggedAxis = ([],[],[])
-        self.__state = False
-        self.beginTime = 0
+        self.__tabState = False
+        self.__startLog = False
+        self.beginPlotTime = 0
+        self.beginLogTime = False
 
 
 
     def get(self, x, y1, y2):
         if len(self.dynamicAxis[0]) == 0:
             self.beginTime = x
-        self.dynamicAxis[0].append(x-self.beginTime)
+        self.dynamicAxis[0].append(x-self.beginPlotTime)
         self.dynamicAxis[1].append(y1)
         self.dynamicAxis[2].append(y2)
         if self.__startLog == True:
-            self.loggedAxis[0].append(x - self.loggedAxis[0][0])
+            if not self.beginLogTime:
+                self.beginLogTime = x
+            self.loggedAxis[0].append(x - self.beginLogTime)
             self.loggedAxis[1].append(y1)
             self.loggedAxis[2].append(y2)
 
     def emit(self):
-        if self.__state == False:
+        if self.__tabState == False:
             return [],[],[]
-        elif self.__state == 'port':
+        elif self.__tabState == 'port':
             axis = self.dynamicAxis
             lenaxis = len(axis[0])
             _slice = lenaxis/(100*(lenaxis**0.5))
             _slice = int(math.ceil(_slice))
             if _slice != 1:
                 print('axis_slice',_slice)
-            return axis[0][::_slice], axis[1][::_slice],axis[2][::_slice]
-        elif self.__state == 'log':
-            return [],[],[]
+            return axis[0][::_slice], axis[1][::_slice], axis[2][::_slice]
+        elif self.__tabState == 'log':
+            if self.__startLog == True:
+                axis = self.loggedAxis
+                if len(axis[0]) == 0:
+                    return [], [], []
+                lenaxis = len(axis[0])
+                _slice = lenaxis/(100*(lenaxis**0.5))
+                _slice = int(math.ceil(_slice))
+                if _slice != 1:
+                    print('axis_slice',_slice)
+                return axis[0][::_slice], axis[1][::_slice], axis[2][::_slice]
+            else:
+                self._clearLoggedAxis()
+                return [], [], []
+        else:
+            return [], [], []
 
     def clearDynamicAxis(self):
         if len(self.dynamicAxis[0]) > 0:
             self.dynamicAxis[0].clear()
             self.dynamicAxis[1].clear()
             self.dynamicAxis[2].clear()
+
+    def _clearLoggedAxis(self):
+        if len(self.loggedAxis[0]) > 0:
+            self.loggedAxis[0].clear()
+            self.loggedAxis[1].clear()
+            self.loggedAxis[2].clear()
+        self.beginLogTime = False
 #
 # state interface
 #
     def setState(self, state):
-        self.__state = state
+        self.__tabState = state
 
-    def setLog(self, state):
+    def setLogReStart(self, state):
+        print ('__startlog', state)
         self.__startLog = state
 
 

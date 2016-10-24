@@ -41,10 +41,11 @@ class TwoLinePlot(MyMplCanvas):
 
     def XYaxit(self,x,y1,y2):
         # self.xlist = x
-        self.xlist,self.unit = self._extractUnit(x)
-        self.y1list = y1
-        self.y2list = y2
-        self.update_figure()
+        if x:
+            self.xlist,self.unit = self._extractUnit(x)
+            self.y1list = y1
+            self.y2list = y2
+            self.update_figure()
 
     def savePlotFig(self):
         def savefigThread(self):
