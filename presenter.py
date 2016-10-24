@@ -49,7 +49,7 @@ class Presenter(QObject):
         self.__view.powerLog.beginTimeSignal.connect(self.pumpModel.setStartTime)
         self.__view.powerLog.logButton.clicked.connect(self.pumpModel.setBeginPlotTime)
         self.__view.powerLog.sqlTableName.connect(self.pumpModel.creatPlot)
-        self.__view.powerLog.stopSavePower.connect(self.pumpModel.setSaveStop)
+        self.__view.powerLog.emitLogStartOrStop.connect(self.pumpModel.setLogStartOrStop)
         self.__view.emitTabBoxStatus.connect(self.pumpModel.plotStateGettedManager)
         ## self.__view.emitUsername.connect(self.pumpModel.setUsername)
         ## self.__view.setbaundratePump.connect(self.pumpModel.baundrateIndexChange)

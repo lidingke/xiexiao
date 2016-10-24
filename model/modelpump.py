@@ -172,7 +172,7 @@ class ModelPump(ModelCore,QObject):
         return showPowerData
 
 
-    def setSaveStop(self,isture):
+    def setLogStartOrStop(self,isture):
         self.startRecord = isture
         self.plotData.setLogReStart(isture)
         # print('set startRecord:',self.startRecord)
@@ -182,6 +182,7 @@ class ModelPump(ModelCore,QObject):
         self.datahand.createPlot(data)
 
     #plot start status
+    #todo: merge setBeginPlotTime and setStartTime
     def setBeginPlotTime(self):
         print('get ti0:', self.timebegin, 'init tabel username', self.username)
         self.datahand.initSqltabel(self.timebegin, self.username)
@@ -235,26 +236,24 @@ class plotDataContainer(object):
             self.loggedAxis[2].append(y2)
 
     def emit(self):
-        if self.__tabState == False:
-            return [],[],[]
-        elif self.__tabState == 'port':
-            axis = self.dynamicAxis
+        def dynamicSlice(axis):
             lenaxis = len(axis[0])
             _slice = lenaxis/(100*(lenaxis**0.5))
             _slice = int(math.ceil(_slice))
             if _slice != 1:
                 print('axis_slice',_slice)
+            return _slice
+
+        if self.__tabState == False:
+            return [],[],[]
+        elif self.__tabState == 'port':
+            axis = self.dynamicAxis
+            _slice = dynamicSlice(axis)
             return axis[0][::_slice], axis[1][::_slice], axis[2][::_slice]
         elif self.__tabState == 'log':
             if self.__startLog == True:
                 axis = self.loggedAxis
-                if len(axis[0]) == 0:
-                    return [], [], []
-                lenaxis = len(axis[0])
-                _slice = lenaxis/(100*(lenaxis**0.5))
-                _slice = int(math.ceil(_slice))
-                if _slice != 1:
-                    print('axis_slice',_slice)
+                _slice = dynamicSlice(axis)
                 return axis[0][::_slice], axis[1][::_slice], axis[2][::_slice]
             else:
                 self._clearLoggedAxis()

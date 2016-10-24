@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QListWidget,QListWidgetItem
+from PyQt5.QtWidgets import QListWidget, QListWidgetItem, QSizePolicy
 from PyQt5.QtCore import pyqtSignal
 from model.database import DataHand
 import time
@@ -17,6 +17,9 @@ class HistoryList(QListWidget):
         self.table = []
         self.setCurrentRow(1)
         self.getTable()
+        self.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
+        self.updateGeometry()
+
 
     def getTable(self):
         table = self.datahand.getTable()

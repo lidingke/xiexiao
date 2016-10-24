@@ -24,9 +24,9 @@ class PowerRecord(QWidget,RecodUI):
 
     beginTimeSignal = pyqtSignal(object,object)
     sqlTableName = pyqtSignal(object)
-    stopSavePower = pyqtSignal(object)
-    timeStateSignal = pyqtSignal(object)
-    logStateSignal = pyqtSignal(object)
+    emitLogStartOrStop = pyqtSignal(object)
+    # timeStateSignal = pyqtSignal(object)
+    # logStateSignal = pyqtSignal(object)
     plotlist = pyqtSignal(object,object,object)
     # plotlistbegin = pyqtSignal(object)
 
@@ -49,14 +49,7 @@ class PowerRecord(QWidget,RecodUI):
         self.timebegin = True
         # self.loadFile()
         self.UI_init()
-        # self.plantlist()
-        # with open('template.qss') as t:
-        #     self.setStyleSheet(t.read())
-        # self.initItemText()
-        # self.arg = arg
-        # self.timer = QTimer()
-        # self.timer.timeout.connect(self.update())
-        # self.timer.start(100)
+
 
     def _setupUi(self):
         self.setupUi(self)
@@ -65,7 +58,7 @@ class PowerRecord(QWidget,RecodUI):
         self._setupUi()
         self.seButton = self.logButton
         self.seButton.buttonState = 'begin'
-        self.seButton.clicked.connect(self.beginOendTime)
+        self.seButton.clicked.connect(self.logSignalManager)
         # self.timeEdit = self.timeEdit
         self.timeEdit.setDisplayFormat(' s : hh : mm')
         # self.timeEdit.setDate(QDate(2000,10,10))
@@ -152,12 +145,10 @@ class PowerRecord(QWidget,RecodUI):
     #     pass
 
 
-    def beginOendTime(self):
+    def logSignalManager(self):
         # self.ticker.run()
         if self.seButton.buttonState == 'begin':
             self.timeLong = self.timeEdit2time()
-            # pdb.set_trace()
-            print('stepEdit',self.stepEdit.text()[:-1])
             self.timeStep = int(self.stepEdit.text()[:-1])
             if self.timeLong < self.timeStep:
                 QMessageBox.information(self, "设置错误","记录时长要比记录步长大")
@@ -165,29 +156,27 @@ class PowerRecord(QWidget,RecodUI):
             # else:
             #记录起始时间
             self.beginTime = time.time()
-            print('beginTime:',self.beginTime)
+            print('stepEdit',self.stepEdit.text()[:-1],'beginTime:',self.beginTime)
             # emit to model.setStartTime
             self.beginTimeSignal.emit(self.beginTime, self.timeStep)
-            self.stopSavePower.emit(True)
-            self.timeStateSignal.emit(self.timeLong)
+            self.emitLogStartOrStop.emit(True)
+            # self.timeStateSignal.emit(self.timeLong)
             self.ticker.startTick(self.timeLong)
-            # emit to plot
-
-            self.logStateSignal.emit(True)
+            # self.logStateSignal.emit(True)
             self.seButton.setText('停止')
             self.seButton.buttonState = 'stop'
         elif self.seButton.buttonState == 'stop':
             self.ticker.stopTick()
             self.seButton.setText('开始')
             self.seButton.buttonState = 'begin'
-            self.stopSavePower.emit(False)
+            self.emitLogStartOrStop.emit(False)
 
 
     def tickerTimeOut(self):
         print('time out')
         self.seButton.setText('开始')
         self.seButton.buttonState = 'begin'
-        self.stopSavePower.emit(False)
+        self.emitLogStartOrStop.emit(False)
 
 
     def timeEdit2time(self):
@@ -245,7 +234,7 @@ class PowerRecord(QWidget,RecodUI):
 
         self.stopTime = time.time()
         self.seButton.setEnabled(True)
-        self.stopSavePower.emit(False)
+        self.emitLogStartOrStop.emit(False)
         # self.seButton.setText('start')
         # self.timebegin = False
 
