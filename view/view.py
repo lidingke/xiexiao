@@ -13,8 +13,6 @@ import pdb
 # from UI.powerUI import Ui_Form as PowerUI
 # from portGBUI import Ui_GroupBox as PortGBUI
 from UI.mainUI import Ui_Form as TabBoxUI
-
-
 from .canvas import TwoLinePlot
 from .powershow import PowerShow
 from .user import UserView
@@ -97,7 +95,7 @@ class View(QWidget):
         self.powerLog.getNowFig(self.painter)
         # self.powerLog.timeStateSignal.connect(self.painter.getLogTimeState)
         # self.powerLog.logStateSignal.connect(self.painter.getStartLog)
-        self.powerLog.plotlist.connect(self.painter.XYaxitList)
+        self.powerLog.plotlist.connect(self.painter.XYaxit)
 
     def _setLastLog(self):
         self.lastLog = LastLog()
@@ -242,6 +240,7 @@ class PowerLog(PowerRecord, QObject):
         self.gridLayout_2 = self.father.logGridLayout
         self.gridLayout = self.father.historyGridLayout
         self.ticker = self.father.ticker
+        self.historyEdit = self.father.historyEdit
         # self.ticker = self
         # pass
 

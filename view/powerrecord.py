@@ -1,6 +1,6 @@
 # PyQt lib
 from PyQt5.QtCore import (pyqtSignal, Qt)
-from PyQt5.QtWidgets import (QWidget, QMessageBox)
+from PyQt5.QtWidgets import (QWidget, QMessageBox, QSizePolicy)
 
 #py lib
 import time
@@ -32,11 +32,9 @@ class PowerRecord(QWidget,RecodUI):
 
     def __init__(self):
         super(PowerRecord, self).__init__()
-        # self.wrpick = WRpickle('data\\reportLast.pickle')
-        # self.pickContext = self.wrpick.loadPick()
         self.pickContext = PickContext()
         self.datahand = DataHand()
-        self.startTime = 0
+        # self.startTime = 0
         self.stopTime = time.time()
         self.userID = ''
         self.powerData = queue.Queue()
@@ -71,14 +69,20 @@ class PowerRecord(QWidget,RecodUI):
         self.ticker.timeOut.connect(self.tickerTimeOut)
         # self.ticker.setNumDigits(10)
         # self.ticker.display('00:00:00')
+        print('hist',self.historyEdit)
+        self.historyEdit.hide()
         self.historyEdit = HistoryList()
+        # self.historyEdit.parent = self
         self.gridLayout_2.addWidget(self.historyEdit, 1, 0, 1, 2)
         self.historyEdit.itemSelectedEmit.connect(self.itemSelectionChanged)
         self.historyEdit.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.printButton.clicked.connect(self.printReport)
+        # self.historyEdit.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
+        # self.historyEdit.updateGeometry()
 
 
     def itemSelectionChanged(self,item):
+        #todo: change pickcontext to double
         print('getitem',item)
         #get nowtable
         self.tableName = item
@@ -94,11 +98,14 @@ class PowerRecord(QWidget,RecodUI):
         #get plot from db
         plotdata = self.datahand.getTableData(self.tableName)
         time_ = []
-        power = []
+        power1 = []
+        power2 = []
         for x in plotdata:
             time_.append(x[0])
-            power.append(x[1])
-        self.plotlist.emit(False,time_,power)
+            power1.append(x[1])
+            power2.append(x[2])
+        self.plotlist.emit(time_, power1, power2)
+        power = power1
         #get calc report
         if time_:
             self.pickContext['timelong'] = str(int(time_[-1]-time_[0]))+'秒'
@@ -170,6 +177,7 @@ class PowerRecord(QWidget,RecodUI):
             self.seButton.setText('开始')
             self.seButton.buttonState = 'begin'
             self.emitLogStartOrStop.emit(False)
+            self.historyEdit.getTable()
 
 
     def tickerTimeOut(self):
@@ -177,6 +185,7 @@ class PowerRecord(QWidget,RecodUI):
         self.seButton.setText('开始')
         self.seButton.buttonState = 'begin'
         self.emitLogStartOrStop.emit(False)
+        self.historyEdit.getTable()
 
 
     def timeEdit2time(self):

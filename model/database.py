@@ -23,7 +23,7 @@ class DataHand(object):
         cursor = conn.cursor()
         try:
             strEx='create table if not exists '+sqlTableName+\
-            ' (time float(17), power float(10), data varchar(10))'
+            ' (time float(17), power1 float(10), power2 float(10), data varchar(10))'
             cursor.execute(strEx)
         except Exception as e:
             raise e
@@ -32,13 +32,15 @@ class DataHand(object):
         conn.close()
         return sqlTableName
 
-    def save2Sql(self,sqlTableName,localTime,power,data):
+    def save2Sql(self,sqlTableName,localTime, power1, power2, data):
 
         conn = sqlite3.connect(self.name)
         cursor = conn.cursor()
         try:
-            strEx='insert into '+sqlTableName+'(time, power,data) values ('+str(localTime)+' , '+str(power)+', \''+data+'\')'
+            # strEx='insert into '+sqlTableName+'(time, power1, power2,data) values ('+str(localTime)+' , '+str(power)+', \''+data+'\')'
             # print(strEx)
+            strEx = '''insert into {}(time, power1, power2,data) values ({} , {}, {}, \'{}\')'''.format(\
+                sqlTableName, str(localTime), str(power1), str(power2), data)
             cursor.execute(strEx)
 
         except sqlite3.OperationalError as e :

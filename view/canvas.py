@@ -70,13 +70,15 @@ class TwoLinePlot(MyMplCanvas):
             return x, ''
 
 
-    def XYaxitList(self, is_, x, y):
+    def XYaxitList(self, is_, x, y1, y2):
         """
         old interface from log
         """
         self.isPloting = is_
         print('getplot ', is_)
         self.xlist = x
-        self.y1list = y
-        self.axes.plot(self.xlist, self.y1list, 'r')
+        self.y1list = y1
+        self.y2list = y2
+        self.axes.plot(self.xlist, self.y1list, 'r',
+                       self.xlist, self.y2list, 'b')
         self.draw()

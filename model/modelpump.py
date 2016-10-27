@@ -1,10 +1,9 @@
 from __future__ import division
-from model.modelcore import ModelCore
-from PyQt5.QtCore import pyqtSignal
+from .modelcore import ModelCore
+from PyQt5.QtCore import pyqtSignal, QObject
 import threading
 import time
-from model.database import DataHand
-from PyQt5.QtCore import QObject
+from .database import DataHand
 
 import pdb
 from model.toolkit import HexSplit
@@ -109,7 +108,7 @@ class ModelPump(ModelCore,QObject):
             self.timebegin = time.time()
         newtime = time.time()
         if self.startRecord == True:
-            threading.Thread(target=self._save2sql, args=(data1, '',), daemon=True).start()
+            threading.Thread(target=self._save2sql, args=(data1, data2, '',), daemon=True).start()
         self.currentTime = newtime
         self.currentValue1 = data1
         self.currentValue2 = data2
@@ -125,12 +124,12 @@ class ModelPump(ModelCore,QObject):
             self.currentValue2, self.showPower2Data)
         self.updatePowerShow.emit(self.showPower1Data, self.showPower2Data)
 
-    def _save2sql(self, power ,hexdata):
+    def _save2sql(self, power1 , power2, hexdata):
         startTime = str(int(self.timebegin))
         localTime = time.time()
         tableName = 'TM'+startTime+'US'+self.username
         try:
-            self.datahand.save2Sql(tableName, localTime, power, hexdata)
+            self.datahand.save2Sql(tableName, localTime, power1, power2, hexdata)
         except Exception as e:
             raise e
 

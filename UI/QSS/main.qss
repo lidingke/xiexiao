@@ -1,0 +1,82 @@
+/*QPushButton {
+    background-color: #eff6fa;
+    border-width: 2px;
+    border-color: #0089A7;
+    border-style: solid;
+    border-radius: 5;
+    padding: 3px;
+    min-width: 9ex;
+    min-height: 2.5ex;
+}*/
+
+QPushButton {
+    background-color: #58b2dc;
+    border-width: 2px;
+    border-color: white;
+    border-style: solid;
+    border-radius: 5;
+    padding: 3px;
+    min-width: 9ex;
+    min-height: 2.5ex;
+}
+
+QPushButton:hover {
+   background-color: #d87c2c4;
+}
+
+/* Increase the padding, so the text is shifted when the button is
+   pressed. */
+QPushButton:pressed {
+    padding-left: 5px;
+    padding-top: 5px;
+    background-color: #58b2dc;
+}
+
+QTabWidget{
+    background-color: #eff6fa;
+    border-style: solid;
+}
+
+
+QTabWidget::pane{
+    border:none;
+    background:#58b2dc;
+}
+
+QTabWidget::tab-bar{
+    alignment:left;
+    border-color: #58b0dc;
+
+}
+
+QTabWidget::tab{
+    background:#58b2dc;
+    color:#ddffff;
+
+    border-top-left-radius: 5;
+    border-top-right-radius: 5;
+}
+
+QTabBar::tab:hover{
+    background:rgb(255,255,255,100)
+
+}
+
+QTabBar::tab{
+
+    background:white;
+    color:black;
+}
+
+QPushButton:pressed, QTabBar::tab:selected{
+    border-color:white;
+    background:#58b2dc;
+    color:#eff6fa;
+}
+
+QLineEdit{
+    border-color:white;
+    background:#58b2dc;
+    color:#eff6fa;
+
+}

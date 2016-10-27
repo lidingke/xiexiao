@@ -22,22 +22,35 @@ class HistoryList(QListWidget):
 
 
     def getTable(self):
+
+        count = self.count()
+        print('count', count)
         table = self.datahand.getTable()
-        # table.append(('last',))
-        for x in table[::-1]:
-            # pdb.set_trace()
-            # QListWidgetItem(x)
-            xsplit = x[0].split('US')
-            timetick = xsplit[0][2:]
-            username = xsplit[1]
-            timeShow = time.strftime('%Y:%m:%d||%H:%M:%S',
-                time.localtime(int(timetick)))
-            item = QListWidgetItem('时间:{}用户:{}'.format(timeShow,username))
-            item.tableName = x[0]
-            self.addItem(item)
+        if count == 0:
+            for  x in  table[::-1]:
+                item = self._createItem(x)
+                self.addItem(item)
+        else:
+            if len(table) > count:
+                item = table[-1]
+                item = self._createItem(item)
+                self.insertItem(0,item)
+
+        print('count', count, len(table))
         self.nowtable = table[-1][0]
         self.table = table
         # print(self.nowtable,type(self.nowtable))
+
+    def _createItem(self, item):
+        xsplit = item[0].split('US')
+        timetick = xsplit[0][2:]
+        username = xsplit[1]
+        timeShow = time.strftime('%Y:%m:%d||%H:%M:%S',
+                                 time.localtime(int(timetick)))
+        itemGet = QListWidgetItem('时间:{}用户:{}'.format(timeShow, username))
+        itemGet.tableName = item[0]
+
+        return itemGet
 
     def getTableData(self):
         return self.datahand.getTableData(self.nowtable)
