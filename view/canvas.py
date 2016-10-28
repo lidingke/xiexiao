@@ -12,7 +12,7 @@ import pdb
 
 class MyMplCanvas(FigureCanvas):
     """Ultimately, this is a QWidget (as well as a FigureCanvasAgg, etc.)."""
-    def __init__(self, parent=None, width=5, height=4, dpi=100):
+    def __init__(self, parent=None, width=5, height=4, dpi=500):
         fig = Figure(figsize=(width, height), dpi=dpi, facecolor = 'white' )
         self.fig = fig
         self.axes = fig.add_subplot(111)
@@ -20,10 +20,10 @@ class MyMplCanvas(FigureCanvas):
         self.axes.hold(False)
         FigureCanvas.__init__(self, fig)
         self.setParent(parent)
-        FigureCanvas.setSizePolicy(self,
-                                   QSizePolicy.Fixed,
-                                   QSizePolicy.Fixed)
-        FigureCanvas.updateGeometry(self)
+        # FigureCanvas.setSizePolicy(self,
+        #                            QSizePolicy.Fixed,
+        #                            QSizePolicy.Fixed)
+        # FigureCanvas.updateGeometry(self)
 
 
 class TwoLinePlot(MyMplCanvas):

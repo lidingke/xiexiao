@@ -1,13 +1,12 @@
-/*QPushButton {
-    background-color: #eff6fa;
-    border-width: 2px;
-    border-color: #0089A7;
-    border-style: solid;
-    border-radius: 5;
-    padding: 3px;
-    min-width: 9ex;
-    min-height: 2.5ex;
-}*/
+/*QWidget#verticalLayoutWidget{*/
+    /*background-color: white;*/
+/*}*/
+QWidget#port, QWidget#label, QWidget#login, QWidget#closePlatform, QWidget#userName, QWidget#ticker, QWidget#timeEdit, QWidget#openPort, QWidget#openPlatform, QWidget#historyEdit, QWidget#label_7, QWidget#passwordIput, QWidget#label_9, QWidget#label_5, QWidget#userRegister, QWidget#label_6, QWidget#closePort, QWidget#label_8, QWidget#setCurrent, QWidget#baundrate, QWidget#currentSpin, QWidget#tabBox, QWidget#label_2, QWidget#printButton, QWidget#label_3, QWidget#logButton, QWidget#stepEdit
+
+{
+    background-color: black;
+}
+
 
 QPushButton {
     background-color: #58b2dc;
@@ -32,51 +31,61 @@ QPushButton:pressed {
     background-color: #58b2dc;
 }
 
-QTabWidget{
-    background-color: #eff6fa;
-    border-style: solid;
-}
+
+/*QWidget{*/
+    /*background: white;*/
+/*}*/
+
+/*QWidget#userTab，QWidget#portTab， QWidget#pumpTab， QWidget#logTab， QWidget#helpTab{*/
+    /*background-color: #58b2dc;*/
+/*}*/
 
 
 QTabWidget::pane{
     border:none;
-    background:#58b2dc;
+    background: rgb(125,185,222);
+    border-radius: 5px;
 }
 
 QTabWidget::tab-bar{
-    alignment:left;
-    border-color: #58b0dc;
+    border:none;
 
 }
 
 QTabWidget::tab{
-    background:#58b2dc;
+    /*background:rgb(239,246,250);*/
     color:#ddffff;
 
-    border-top-left-radius: 5;
-    border-top-right-radius: 5;
 }
 
 QTabBar::tab:hover{
-    background:rgb(255,255,255,100)
+    background:rgb(255,255,255)
 
 }
 
 QTabBar::tab{
-
     background:white;
     color:black;
+    border:none;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+    height: 28px;
+    min-width: 85px;
+    margin-right: 5px;
+    padding-left: 5px;
+    padding-right: 5px;
 }
 
-QPushButton:pressed, QTabBar::tab:selected{
+/*QPushButton:pressed, */
+QTabBar::tab:selected{
     border-color:white;
-    background:#58b2dc;
-    color:#eff6fa;
+    background:rgb(125,185,222);
+    color:black;
 }
 
 QLineEdit{
     border-color:white;
     background:#58b2dc;
-    color:#eff6fa;
+    color: #00ccff;
 
 }

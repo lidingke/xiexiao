@@ -9,7 +9,7 @@ class PowerShow(QWidget):
         self.setPalette(QPalette(QColor(239,246,250)))
         self.setAutoFillBackground(True)
         self.setGeometry(100,100,100,100)
-        self.setMinimumSize(100, 100)
+        self.setMinimumSize(250, 100)
         self.pter = QPainter()
         self.powerList = {'logNumber':0,
             'currentPower':0,

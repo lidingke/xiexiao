@@ -48,26 +48,19 @@ if __name__ == '__main__':
             QCoreApplication.setLibraryPaths(['./plugins/py34'])
 
     app = QApplication(sys.argv)
-    pt = QPalette()
+    # pt = QPalette()
     # pt.setColor(QPalette.Background , QColor(239,246,250))
     # pt.setColor(QPalette.ButtonText, QColor(34,39,42))
     # pt.setColor(QPalette.Button, QColor(239,246,250))
     # pt.setColor(QPalette.WindowText, QColor(34,39,42))
     # pt.setColor(QPalette.Hghlight, QColor(74,149,184))
-
-    app.setPalette(pt)
-    styleSheet = loadStyleSheet('main')
-    # print('get style',styleSheet)
-    app.setStyleSheet(styleSheet)
+    # app.setPalette(pt)
+    app.setStyleSheet(loadStyleSheet('main'))
     font = app.font()
     font.setPointSize(10)
     font.setFamily('微软雅黑')
-    # font.setFamily('Microsoft Yehei')
-
     app.setFont(font)
-
     gui         = View()
-
     presenter   = Presenter(gui)
     gui.show()
 

@@ -1,7 +1,7 @@
 #qt tool
 from PyQt5.QtWidgets    import (QWidget, QVBoxLayout,
     QHBoxLayout, QPlainTextEdit, QApplication, QLineEdit, QSizePolicy)
-from PyQt5.QtCore import Qt, QObject, pyqtSignal
+from PyQt5.QtCore import Qt, QObject, pyqtSignal, QRect
 # from PyQt5.QtGui import
 #python tool
 import time
@@ -42,7 +42,7 @@ class View(QWidget):
     def __initUI(self):
         self.tabBoxUI = TabBoxUI()
         self.tabBoxUI.setupUi(self)
-        # self.__initTabBox()
+        self.__initTabBox()
         self.__initUserUI()
         self.__initPort()
         self.__initMatplotUI()
@@ -53,8 +53,19 @@ class View(QWidget):
 
 
     def __initTabBox(self):
-        self.tabBoxUI.tabBox.setTabEnabled(3, False)
-
+        # self.tabBoxUI.setGeometry(QRect(0, 0, 700, 600))
+        # self.tabBoxUI.tabBox.setTabEnabled(3, False)
+        # self.tabBoxUI.helpTab.hide()
+        print(self.tabBoxUI.verticalLayoutWidget)
+        bugkey = []
+        for k,v in self.tabBoxUI.__dict__.items():
+            if isinstance(v, QWidget):
+                if type(v) != QWidget:
+                    bugkey.append("QWidget#"+str(k)+', ')
+        # pdb.set_trace()
+        print(''.join(bugkey))
+        pass
+        # self.
 
 
     def __initUserUI(self):
@@ -76,19 +87,20 @@ class View(QWidget):
         self.tabBoxUI.port.currentIndexChanged.connect(self.emitBaundratePort)
 
     def __initMatplotUI(self):
-        matplot = self.tabBoxUI.matplot
+        # matplot = self.tabBoxUI.
+        matplot = QWidget()
         self.painter = TwoLinePlot(matplot, width=5, height=4, dpi=100)
-
-        self.painter.setSizePolicy(QSizePolicy.Expanding,QSizePolicy.Expanding)
-        self.painter.updateGeometry()
+        self.tabBoxUI.mainLayout.addWidget(self.painter)
+        # self.painter.setSizePolicy(QSizePolicy.Expanding,QSizePolicy.Expanding)
+        # self.painter.updateGeometry()
         # self.tabBoxUI.mainLayout.replaceWidget(matplot,self.painter)
 
     def __initPowerShow(self):
         self.powerShow1 = PowerShow()
         self.powerShow2 = PowerShow()
-        self.tabBoxUI.cmdLayout.addWidget(self.powerShow1)
-        self.tabBoxUI.cmdLayout.addWidget(self.powerShow2)
-        self.tabBoxUI.cmdLayout.addWidget(QPlainTextEdit())
+        self.tabBoxUI.tabsides.addWidget(self.powerShow1)
+        self.tabBoxUI.tabsides.addWidget(self.powerShow2)
+        # self.tabBoxUI.cmdLayout.addWidget(QPlainTextEdit())
 
     def __initLog(self):
         self.powerLog = PowerLog(self.tabBoxUI)
