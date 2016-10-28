@@ -11,9 +11,9 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_Form(object):
     def setupUi(self, Form):
         Form.setObjectName("Form")
-        Form.resize(1046, 595)
+        Form.resize(1013, 597)
         self.verticalLayoutWidget = QtWidgets.QWidget(Form)
-        self.verticalLayoutWidget.setGeometry(QtCore.QRect(0, 0, 581, 191))
+        self.verticalLayoutWidget.setGeometry(QtCore.QRect(10, 0, 611, 191))
         self.verticalLayoutWidget.setObjectName("verticalLayoutWidget")
         self.mainLayout = QtWidgets.QVBoxLayout(self.verticalLayoutWidget)
         self.mainLayout.setSizeConstraint(QtWidgets.QLayout.SetFixedSize)
@@ -29,7 +29,7 @@ class Ui_Form(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.tabBox.sizePolicy().hasHeightForWidth())
         self.tabBox.setSizePolicy(sizePolicy)
-        self.tabBox.setMinimumSize(QtCore.QSize(200, 180))
+        self.tabBox.setMinimumSize(QtCore.QSize(300, 180))
         self.tabBox.setMaximumSize(QtCore.QSize(16777215, 180))
         self.tabBox.setObjectName("tabBox")
         self.userTab = QtWidgets.QWidget()
@@ -172,6 +172,7 @@ class Ui_Form(object):
         self.logGridLayout.addWidget(self.printButton, 0, 2, 1, 1)
         self.horizontalLayout.addLayout(self.logGridLayout)
         self.widget = QtWidgets.QWidget(self.logTab)
+        self.widget.setMinimumSize(QtCore.QSize(40, 0))
         self.widget.setObjectName("widget")
         self.horizontalLayout.addWidget(self.widget)
         self.tabBox.addTab(self.logTab, "")
@@ -183,7 +184,7 @@ class Ui_Form(object):
         self.mainLayout.addLayout(self.tabsides)
 
         self.retranslateUi(Form)
-        self.tabBox.setCurrentIndex(0)
+        self.tabBox.setCurrentIndex(3)
         QtCore.QMetaObject.connectSlotsByName(Form)
 
     def retranslateUi(self, Form):

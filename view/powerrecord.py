@@ -59,6 +59,7 @@ class PowerRecord(QWidget,RecodUI):
         self.seButton.clicked.connect(self.logSignalManager)
         # self.timeEdit = self.timeEdit
         self.timeEdit.setDisplayFormat(' s : hh : mm')
+        print('time edit',self.timeEdit)
         # self.timeEdit.setDate(QDate(2000,10,10))
         # print(self.timeEdit.text())
         self.ticker.hide()
@@ -69,9 +70,10 @@ class PowerRecord(QWidget,RecodUI):
         self.ticker.timeOut.connect(self.tickerTimeOut)
         # self.ticker.setNumDigits(10)
         # self.ticker.display('00:00:00')
-        print('hist',self.historyEdit)
+
         self.historyEdit.hide()
         self.historyEdit = HistoryList()
+        print('hist',self.historyEdit)
         # self.historyEdit.parent = self
         self.gridLayout_2.addWidget(self.historyEdit, 1, 0, 1, 2)
         self.historyEdit.itemSelectedEmit.connect(self.itemSelectionChanged)
