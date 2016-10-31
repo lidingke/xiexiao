@@ -48,8 +48,9 @@ class TwoLinePlot(MyMplCanvas):
             self.update_figure()
 
     def savePlotFig(self):
-        def savefigThread(self):
-            self.fig.savefig("data\\plot.svg", format='svg')  # data\
+        fig = self.fig
+        def savefigThread():
+            fig.savefig("data\\plot.svg", format='svg')  # data\
         threading.Thread(target=savefigThread, daemon=True).start()
 
 

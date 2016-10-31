@@ -6,7 +6,7 @@ class PowerShow(QWidget):
     """docstring for PowerShow"""
     def __init__(self,):
         super(PowerShow, self).__init__()
-        self.setPalette(QPalette(QColor(239,246,250)))
+        self.setPalette(QPalette(QColor('white')))
         self.setAutoFillBackground(True)
         self.setGeometry(100,100,100,100)
         self.setMinimumSize(250, 100)
@@ -20,22 +20,22 @@ class PowerShow(QWidget):
 
     def paintEvent(self,event):
         pter = self.pter
-        self.text = '最大功率:'+self.__Power2str(self.powerList['maxPower'])+'\n\
-最小功率:'+self.__Power2str(self.powerList['minPower'])+'\n\
-平均功率:'+self.__Power2str(self.powerList['averagePower'])+'\n\
-功率方差:'+str(round(self.powerList['variancePower'],2))+'\n'
+        self.text = '最大功率:'+self.__Power2str(self.powerList['maxPower'])+'\n\n\
+最小功率:'+self.__Power2str(self.powerList['minPower'])+'\n\n\
+平均功率:'+self.__Power2str(self.powerList['averagePower'])+'\n\n\
+功率方差:'+str(round(self.powerList['variancePower'],2))+'\n\n'
         self.textshow = self.__Power2str(self.powerList['currentPower'])
         pter.begin(self)
         # print('PowerShowlist',self.text ,'\n',self.textshow)
         pter.setPen(QPen(Qt.black,0.1))
-        pter.setBrush(QBrush(QColor(125,185,222)))
-        pter.drawRoundedRect(event.rect(), 10, 10)
+        pter.setBrush(QBrush(QColor(4,159,241)))
+        pter.drawRoundedRect(event.rect(), 5, 5)
         pter.translate(10,10)
         self.drawPowerText(event,pter)
         # pter.drawRoundedRect(20,20, 210, 160,50,50)
         pter.translate(130,2)
         self.drawPowershishiText(event, pter)
-        pter.translate(-5,20)
+        pter.translate(-10,40)
         self.drawPowerCurrentText(event, pter)
         pter.end()
 

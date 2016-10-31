@@ -47,19 +47,21 @@ QPushButton:pressed {
 /*}*/
 
 
+
+
+QWidget#userTab{
+    border:none;
+    background: #049ff1;
+    border-top-left-radius: 0;
+    border-bottom-right-radius: 5px;
+    border-bottom-left-radius: 5px;
+    border-top-right-radius: 5px;
+}
+
 QTabWidget::pane{
     border:none;
     background: #049ff1;
     border-radius: 5px;
-}
-
-QTabWidget#userTab{
-    border:none;
-    background: #049ff1;
-    border-top-left-radius: 0;
-    /*border-bottom-right-radius: 5px;*/
-    /*border-bottom-left-radius: 5px;*/
-    /*border-top-right-radius: 5px;*/
 }
 
 QTabWidget::tab-bar{
@@ -275,4 +277,8 @@ QLCDNumber{
     font-size: 20px;
     font-weight: 2px;
     color: white;
+}
+
+QDialog{
+    background: #049ff1;
 }

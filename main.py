@@ -7,8 +7,7 @@ import sys
 import pdb
 # Library imports
 from PyQt5.QtWidgets import QApplication
-from PyQt5.QtGui import QPalette
-from PyQt5.QtGui import QColor
+from PyQt5.QtGui import QPalette, QColor
 from PyQt5.QtCore import QCoreApplication, QFile
 
 # Local imports
@@ -20,15 +19,8 @@ def loadStyleSheet( sheetName):
 
     with open('UI/QSS/{}.qss'.format(sheetName), 'rb') as f:
         styleSheet = f.readlines()
-        # print(read)
         styleSheet = b''.join(styleSheet)
         styleSheet = styleSheet.decode('utf-8')
-        # pdb.set_trace()
-    # file = QFile(':/UI/QSS/%s.qss' % sheetName.lower())
-    # file.open(QFile.ReadOnly)
-    #
-    # styleSheet = file.readAll()
-    # styleSheet = str(styleSheet, encoding='utf8')
 
     return styleSheet
 

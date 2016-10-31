@@ -59,7 +59,7 @@ class PowerRecord(QWidget,RecodUI):
         self.seButton.clicked.connect(self.logSignalManager)
         # self.timeEdit = self.timeEdit
         self.timeEdit.setDisplayFormat(' s : hh : mm')
-        print('time edit',self.timeEdit)
+        # print('time edit',self.timeEdit)
         # self.timeEdit.setDate(QDate(2000,10,10))
         # print(self.timeEdit.text())
         self.ticker.hide()
@@ -73,14 +73,12 @@ class PowerRecord(QWidget,RecodUI):
 
         self.historyEdit.hide()
         self.historyEdit = HistoryList()
-        print('hist',self.historyEdit)
-        # self.historyEdit.parent = self
+        # print('hist',self.historyEdit)
         self.gridLayout_2.addWidget(self.historyEdit, 1, 0, 1, 2)
         self.historyEdit.itemSelectedEmit.connect(self.itemSelectionChanged)
         self.historyEdit.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.printButton.clicked.connect(self.printReport)
-        # self.historyEdit.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
-        # self.historyEdit.updateGeometry()
+
 
 
     def itemSelectionChanged(self,item):
@@ -92,7 +90,6 @@ class PowerRecord(QWidget,RecodUI):
         temp = item.split('US')
         self.userID = temp[1]
         self.timeTick = temp[2:]
-        # self.NowContextGet()
         #get last log
         self.pickContext = PickContext()
         #get username
@@ -107,49 +104,29 @@ class PowerRecord(QWidget,RecodUI):
             power1.append(x[1])
             power2.append(x[2])
         self.plotlist.emit(time_, power1, power2)
-        power = power1
-        #get calc report
-        if time_:
-            self.pickContext['timelong'] = str(int(time_[-1]-time_[0]))+'秒'
-            self.pickContext['maxsignalpower'] = self.__Power2str(max(power))
-            self.pickContext['minsingalpower'] = self.__Power2str(min(power))
-            self.pickContext['averagesingalepower'] = self.__Power2str(numpy.mean(power))
-            self.pickContext['powerstable'] = self.__Power2str(numpy.std(power))
-        else:
-            self.pickContext['timelong'] = '0'
-            self.pickContext['maxsignalpower'] = '0'
-            self.pickContext['minsingalpower'] = '0'
-            self.pickContext['averagesingalepower'] = '0'
-            self.pickContext['powerstable'] = '0'
+
+        pick = self._powerShowPickUpdate(time_, power1, power2)
+        self.pickContext.update(pick)
         print('PowerRecord change')
         self.pickContext.save_pick_file()
 
+
+
     def printReport(self):
-        # self.getDbdata()
         if self.figGet:
             self.figGet.savePlotFig()
         rep = ReportDialog(self)
-        # print('rep',rep)
         rep.exec_()
         if rep.saveOrcancel == 'save':
-            print('pickContext',self.pickContext.pickContext)
             printer = PdfCreater(self,)
             self.emitSqlTableName.connect(printer.getDBData)
             printer.saveToFile()
-        # printer.savePdf()
 
-        # if self.itemChangeStatus is False:
-        #     self.itemText = self.historyEdit.item(0).text()
-        # print('print:',self.itemText)
-        # self.pdfItem['']
 
     def getNowFig(self,fig):
         self.figGet = fig
 
-
     # def NowContextGet(self):
-
-
     # # def plotTable():
     #     pass
 
@@ -298,6 +275,30 @@ class PowerRecord(QWidget,RecodUI):
             return str(round(data,2))+'W'
         else:
             return str(round(data*1000,2)) + 'mW'
+
+    def _powerShowPickUpdate(self, time_, power1, power2):
+        pick = {}
+        if time_:
+            pick['timelong'] = str(int(time_[-1] - time_[0])) + '秒'
+            pick['maxsignalpower1'] = self.__Power2str(max(power1))
+            pick['minsingalpower1'] = self.__Power2str(min(power1))
+            pick['averagesingalepower1'] = self.__Power2str(numpy.mean(power1))
+            pick['powerstable1'] = self.__Power2str(numpy.std(power1))
+            pick['maxsignalpower2'] = self.__Power2str(max(power2))
+            pick['minsingalpower2'] = self.__Power2str(min(power2))
+            pick['averagesingalepower2'] = self.__Power2str(numpy.mean(power2))
+            pick['powerstable2'] = self.__Power2str(numpy.std(power2))
+        else:
+            pick['timelong'] = '0'
+            pick['maxsignalpower1'] = '0'
+            pick['minsingalpower1'] = '0'
+            pick['averagesingalepower1'] = '0'
+            pick['powerstable1'] = '0'
+            pick['maxsignalpower2'] = '0'
+            pick['minsingalpower2'] = '0'
+            pick['averagesingalepower2'] = '0'
+            pick['powerstable2'] = '0'
+        return pick
 
 
 ###

@@ -117,10 +117,14 @@ class PickContext(MetaDict):
       timelong = text.get('timelong','')
 
       title2st = text.get('title2st','')
-      maxsignalpower = text.get('maxsignalpower','')
-      minsingalpower = text.get('minsingalpower','')
-      averagesingalepower = text.get('averagesingalepower','')
-      powerstable = text.get('powerstable','')
+      maxsignalpower1 = text.get('maxsignalpower1','')
+      minsingalpower1 = text.get('minsingalpower1','')
+      averagesingalepower1 = text.get('averagesingalepower1','')
+      powerstable1 = text.get('powerstable1','')
+      maxsignalpower2 = text.get('maxsignalpower2','')
+      minsingalpower2 = text.get('minsingalpower2','')
+      averagesingalepower2 = text.get('averagesingalepower2','')
+      powerstable2 = text.get('powerstable2','')
       txtContext = '''
     {}
     日期：{}\r\n
@@ -138,13 +142,18 @@ class PickContext(MetaDict):
     光纤长度：{}\r\n
     测试时长：{}
     {}\r\n
-    信号光功率最大值：{}\r\n
-    信号光功率最小值：{}\r\n
-    信号光功率平均值：{}\r\n
-    功率稳定性：{}'''.format(title,date,worker,fibertype,producer,fiberNo,
+    信号光1功率最大值：{}\r\n
+    信号光1功率最小值：{}\r\n
+    信号光1功率平均值：{}\r\n
+    功率稳定性1：{}
+    信号光2功率最大值：{}\r\n
+    信号光2功率最小值：{}\r\n
+    信号光率2平均值：{}\r\n
+    功率稳定性2：{}'''.format(title,date,worker,fibertype,producer,fiberNo,
       title1st,temperature,humidity,signalwavelength,signalpulsewidth,
       signalfrequence,secondpulsepower,fiberlength,timelong,title2st,
-      maxsignalpower,minsingalpower,averagesingalepower,powerstable)
+      maxsignalpower1,minsingalpower1,averagesingalepower1,powerstable1,
+      maxsignalpower2, minsingalpower2, averagesingalepower2, powerstable2)
       return txtContext
 
     def xlsContainGet(self):
@@ -166,10 +175,14 @@ class PickContext(MetaDict):
         ('光纤长度：', text.get('fiberlength','')),
         ('测试时长：', text.get('timelong','')),
         (text.get('title2st','')),
-        ('信号光功率最大值：', text.get('maxsignalpower','')),
-        ('信号光功率最小值：', text.get('minsingalpower','')),
-        ('信号光功率平均值：', text.get('averagesingalepower','')),
-        ('功率稳定性：', text.get('powerstable',''))
+        ('信号光功率1最大值：', text.get('maxsignalpower1', '')),
+        ('信号光功率1最小值：', text.get('minsingalpower1', '')),
+        ('信号光功率1平均值：', text.get('averagesingalepower1', '')),
+        ('功率稳定性1：', text.get('powerstable1', '')),
+        ('信号光功率2最大值：', text.get('maxsignalpower2','')),
+        ('信号光功率2最小值：', text.get('minsingalpower2','')),
+        ('信号光功率2平均值：', text.get('averagesingalepower2','')),
+        ('功率稳定性2：', text.get('powerstable2',''))
         )
         return xlsContain
 
@@ -194,10 +207,14 @@ class PickContext(MetaDict):
         timelong = text.get('timelong','')
 
         title2st = text.get('title2st','')
-        maxsignalpower = text.get('maxsignalpower','')
-        minsingalpower = text.get('minsingalpower','')
-        averagesingalepower = text.get('averagesingalepower','')
-        powerstable = text.get('powerstable','')
+        maxsignalpower1 = text.get('maxsignalpower1','')
+        minsingalpower1 = text.get('minsingalpower1','')
+        averagesingalepower1 = text.get('averagesingalepower1','')
+        powerstable1 = text.get('powerstable1','')
+        maxsignalpower2 = text.get('maxsignalpower2','')
+        minsingalpower2 = text.get('minsingalpower2','')
+        averagesingalepower2 = text.get('averagesingalepower2','')
+        powerstable2 = text.get('powerstable2','')
 
         thtml = '''
 <!DOCTYPE html>
@@ -274,10 +291,14 @@ class PickContext(MetaDict):
         <br /> 测试时长：'''+timelong+'''
     </p>
     <h2 id="_3">'''+title2st+'''</h2>
-    <p>信号光功率最大值：'''+maxsignalpower+'''
-        <br /> 信号光功率最小值：'''+minsingalpower+'''
-        <br /> 信号光功率平均值：'''+averagesingalepower+'''
-        <br /> 功率稳定性：'''+powerstable+'''
+    <p>信号光功率最大值：'''+maxsignalpower1+'''
+        <br /> 信号光1功率最小值：'''+minsingalpower1+'''
+        <br /> 信号光1功率平均值：'''+averagesingalepower1+'''
+        <br /> 功率稳定性1：'''+powerstable1+'''
+        <br /> 信号光2功率最大值：'''+maxsignalpower2+'''
+        <br /> 信号光2功率最小值：'''+minsingalpower2+'''
+        <br /> 信号光2功率平均值：'''+averagesingalepower2+'''
+        <br /> 功率稳定性2：'''+powerstable2+'''
         <br />
     </p>
     <img src= "data/plot.svg">
@@ -286,7 +307,7 @@ class PickContext(MetaDict):
 </html>
     '''
         # print('worker',worker)
-        print('thtml:',thtml)
+        # print('thtml:',thtml)
         return thtml
 
     def __Power2str(self,data):
