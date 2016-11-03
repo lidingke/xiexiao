@@ -64,12 +64,14 @@ class View(QWidget):
                     bugkey.append("QWidget#"+str(k)+', ')
         # pdb.set_trace()
         print(''.join(bugkey))
-        pass
-        # self.
+        # self.tabBoxUI.tabBox.setTabEnabled(1, False)
+        # self.tabBoxUI.tabBox.setTabEnabled(2, False)
+        # self.tabBoxUI.tabBox.setTabEnabled(3, False)
 
 
     def __initUserUI(self):
         self.myUserUI = MyUserUI(self.tabBoxUI)
+
 
     def __initPort(self):
         menuItem = ['300 baud','1200 baud',
@@ -85,6 +87,16 @@ class View(QWidget):
         self.tabBoxUI.port.addItems(portItem)
         self.tabBoxUI.baundrate.currentIndexChanged.connect(self.emitBaundratePort)
         self.tabBoxUI.port.currentIndexChanged.connect(self.emitBaundratePort)
+        def openEvent():
+            self.tabBoxUI.closePort.setEnabled(True)
+            self.tabBoxUI.openPort.setEnabled(False)
+            self.tabBoxUI.tabBox.setTabEnabled(2, True)
+        self.tabBoxUI.openPort.clicked.connect(openEvent)
+        def closeEvent():
+            self.tabBoxUI.closePort.setEnabled(False)
+            self.tabBoxUI.openPort.setEnabled(True)
+            self.tabBoxUI.tabBox.setTabEnabled(2, False)
+        self.tabBoxUI.closePort.clicked.connect(closeEvent)
 
     def __initMatplotUI(self):
         # matplot = self.tabBoxUI.
@@ -178,11 +190,17 @@ class View(QWidget):
     def _initTabStateChange(self):
         def openport():
             self._tabBoxStateManager('openPort',{})
+            self.tabBoxUI.openPlatform.setEnabled(False)
+            self.tabBoxUI.closePlatform.setEnabled(True)
         self.tabBoxUI.openPlatform.clicked.connect(openport)
+
         def closeport():
             self._tabBoxStateManager('closePort', {})
+            self.tabBoxUI.openPlatform.setEnabled(True)
+            self.tabBoxUI.closePlatform.setEnabled(False)
         self.tabBoxUI.closePlatform.clicked.connect(closeport)
         getCurrentIndex = self.tabBoxUI.tabBox.currentIndex
+
         def startlog():
             print ('get in startlog', getCurrentIndex())
             self._tabBoxStateManager('startLog', {'currentIndex':getCurrentIndex()})

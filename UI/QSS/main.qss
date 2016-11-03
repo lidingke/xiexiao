@@ -37,6 +37,18 @@ QPushButton:pressed {
     background-color: #58b2dc;
 }
 
+QPushButton:!enabled {
+    background-color: #049ff1;
+    color: gray;
+    border-width: 2px;
+    border-color: white;
+    border-style: solid;
+    border-radius: 5;
+    padding: 3px;
+    min-width: 9ex;
+    min-height: 2.5ex;
+}
+
 
 /*QWidget{*/
     /*background: white;*/
@@ -66,7 +78,12 @@ QTabWidget::pane{
 
 QTabWidget::tab-bar{
     border:none;
+}
 
+QTabBar::tab:!enabled{
+    border:none;
+    color:gray;
+    /*background: gray;*/
 }
 
 QTabWidget::tab{

@@ -155,8 +155,8 @@ class ModelCore(threading.Thread, QObject):
         self.ser.close()
 
         # time.sleep(0.2)
-        # self.ser = serial.Serial(baudrate=self.br, timeout=120)
-        self.ser = None
+        self.ser = serial.Serial(baudrate=self.br, timeout=120)
+        # self.ser = None
         # print('iser open', self.ser.isOpen())
         self.printShow('ser=',self.ser)
 
@@ -222,7 +222,7 @@ class ModelCore(threading.Thread, QObject):
             # time.sleep(1)
             print(e)
             data = b'-1'
-        except AttributeError as e:
+        except Exception as e:
             print(e)
             data = b'-1'
         return data
