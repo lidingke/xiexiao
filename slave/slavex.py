@@ -61,7 +61,6 @@ class SlaveX(SerialModel):
 
 
     def _coreMsgProcess(self, data):
-        #todo
         #open platform
         #close platform
         #'opensecondpump':                   ' EB 90 02 00 0B 00 01 90 EB',

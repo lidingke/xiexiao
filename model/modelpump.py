@@ -29,7 +29,7 @@ class ModelPump(ModelCore,QObject):
         self.plotData = plotDataContainer()
         self.timebegin = False
         self.tempdetector = TempDetector()
-        self.logTimeStep = 0.1
+        self.logTimeStep = 1
         self.dataGetDict = {'dataGet': []}
         self.datasaveTick = DataSaveTick(self.logTimeStep, self.dataGetDict)
         self.datasaveTick.start()

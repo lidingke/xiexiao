@@ -36,10 +36,10 @@ class MsgSet(object):
 
 #=======pump==========
         #first pump
-        'openpump':                        ' EB 90 02 00 0A 00 01 90 EB',
-        'closepump':                        ' EB 90 02 00 0A 00 00 90 EB',
+        'openpump':                        ' EB 90 02 00 0B 00 01 90 EB',
+        'closepump':                        ' EB 90 02 00 0B 00 00 90 EB',
         #set pump current
-        'setcurrent':                          ' EB 90 02 01 0A FF FF 90 EB',
+        'setcurrent':                          ' EB 90 02 01 0B FF FF 90 EB',
         #power caculate
         'powerandtemp':                        '9A FF FF FF FF FF FF FF FF A9'
 
@@ -69,6 +69,24 @@ class MsgSet(object):
         with open('data\\msg.pickle', 'wb') as f1:
             pickle.dump(msg, f1)
 
+
+    def getHexMsg(self):
+        msg = self.msg
+        msg['msgDictStr'] = self.msgDictStr
+        msgDictHex = dict()
+
+        for k, v in self.msgDictStr.items():
+            msgDictHex[k] = b''.fromhex(v)  # v.replace(b" ",b"\x")
+        # self.msgDict = self.msgDictHex
+        msgDictHexNoRe = {}
+        print(msgDictHex)
+        for k, v in msgDictHex.items():
+            if k[-6:] != 'return':
+                msgDictHexNoRe[k] = v
+
+        sendmsgrec = dict([(v, k) for k, v in msgDictHexNoRe.items()])
+        msg['msgDictHex'] = msgDictHex
+        return msgDictHex
 
 if __name__ == '__main__':
     pc = LastLog()

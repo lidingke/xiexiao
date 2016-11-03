@@ -82,7 +82,6 @@ class PowerRecord(QWidget,RecodUI):
 
 
     def itemSelectionChanged(self,item):
-        #todo: change pickcontext to double
         print('getitem',item)
         #get nowtable
         self.tableName = item

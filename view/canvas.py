@@ -18,6 +18,7 @@ class MyMplCanvas(FigureCanvas):
         self.axes = fig.add_subplot(111)
         # We want the axes cleared every time plot() is called
         self.axes.hold(False)
+        self.axes.grid(True)
         FigureCanvas.__init__(self, fig)
         self.setParent(parent)
         # FigureCanvas.setSizePolicy(self,
