@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'main2.ui'
+# Form implementation generated from reading ui file 'main.ui'
 #
 # Created by: PyQt5 UI code generator 5.6
 #
@@ -177,15 +177,11 @@ class Ui_Form(object):
         spacerItem1 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout.addItem(spacerItem1)
         self.tabBox.addTab(self.logTab, "")
-        self.helpTab = QtWidgets.QWidget()
-        self.helpTab.setContextMenuPolicy(QtCore.Qt.NoContextMenu)
-        self.helpTab.setObjectName("helpTab")
-        self.tabBox.addTab(self.helpTab, "")
         self.tabsides.addWidget(self.tabBox)
         self.mainLayout.addLayout(self.tabsides)
 
         self.retranslateUi(Form)
-        self.tabBox.setCurrentIndex(3)
+        self.tabBox.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(Form)
 
     def retranslateUi(self, Form):
@@ -213,5 +209,4 @@ class Ui_Form(object):
         self.label_8.setText(_translate("Form", "记录步长："))
         self.printButton.setText(_translate("Form", "    打印    "))
         self.tabBox.setTabText(self.tabBox.indexOf(self.logTab), _translate("Form", "功率计"))
-        self.tabBox.setTabText(self.tabBox.indexOf(self.helpTab), _translate("Form", "页"))
 

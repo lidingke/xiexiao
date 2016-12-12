@@ -49,6 +49,9 @@ class View(QWidget):
         self.__initLog()
         self.__initPowerShow()
         self._initTabStateChange()
+        self.setWindowTitle("斜率效率平台软件")
+        # self.setWindowFlags(Qt.WindowMinimizeButtonHint)
+        # self.setFixedSize(self.width(),self.height())
         # temp disable tabbox
 
 
