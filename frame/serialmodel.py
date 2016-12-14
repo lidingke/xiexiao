@@ -10,6 +10,8 @@ class SerialModel(threading.Thread):
         self.baundrate = 9600
         self.ser = False
         self._initPort()
+        self.running = True
+        self.data = b'-1'
 
     def _initPort(self):
         """set default baundrate 9600, default port None"""
@@ -39,7 +41,10 @@ class SerialModel(threading.Thread):
         else:
             return b'-1'
 
-    def run(self):
-        raise NotImplementedError
+    # def run(self):
+    #     raise NotImplementedError
+
+    def close(self):
+        self.running = False
 
 

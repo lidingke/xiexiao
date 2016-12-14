@@ -17,16 +17,18 @@ class SlaveX(SerialModel):
 
     def run(self):
         threading.Thread(target = self._sendCurrent, daemon = True).start()
-        while True:
+        while self.running:
             if self.ser:
                 data = self._analysisbit()
                 if data :
+                    if hasattr(self, 'data'):
+                        self.data = data
                     self._coreMsgProcess(data)
 
 
 
     def _sendCurrent(self):
-        while True:
+        while self.running:
             if self.isOpen == True:
                 self._write(self._currentMsg())
                 # print ('write',self._currentMsg())
