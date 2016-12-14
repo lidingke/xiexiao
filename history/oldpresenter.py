@@ -186,10 +186,10 @@ class Presenter:
 
     def end_cmd(self):
         if self.srcModel:
-            self.srcModel.stop()
+            self.srcModel.close()
         # self.tempModel.stop()
         if self.pumpModel:
-            self.pumpModel.stop()
+            self.pumpModel.close()
         self.__view.lastLogSave()
 
 

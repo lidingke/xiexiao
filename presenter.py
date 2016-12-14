@@ -83,7 +83,7 @@ class Presenter(QObject):
 
     def end_cmd(self):
         if self.pumpModel:
-            self.pumpModel.stop()
+            self.pumpModel.close()
         self.__view.lastLogSave()
 
 

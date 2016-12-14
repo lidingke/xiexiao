@@ -1,15 +1,10 @@
 import  threading
 import  queue
-#from    time                import sleep
 import time
 import logging
-# from    sys                 import exit
 import pickle
-# import sqlite3
 import pdb
 from    PyQt5.QtCore        import pyqtSignal, QObject
-# from    PyQt5.QtCore        import QTime
-# PySerial imports
 import  serial
 
 from  .lastlog import MsgSet
@@ -18,33 +13,21 @@ class ModelCore(threading.Thread, QObject):
     """docstring for ModelCore"""
     error = pyqtSignal(object)
 
-    def __init__(self,port = 'com12'):
+    def __init__(self,port = 'com15'):
         threading.Thread.__init__(self)
         QObject.__init__(self)
         super(ModelCore, self).__init__()
-        # print('is ModelCore __init__?')
         self.setDaemon(True)
         self.printText = queue.Queue()
         self.port = port
         self.br         = 9600
         self.timeout    = 0.001
         self.username = 'nobody'
-        # PySerial object
-        self.ser        = None
-        # Flag for main cycle
+        self.ser        = serial.Serial(baudrate=self.br, timeout=120)
         self.running    = True
         self.srcPortOpen = False
         self.pumpOpen = False
         self.isSerOpen = False
-        # self.hexsplit = HexSplit.fun()
-
-        # with open('data\\msg.pickle', 'rb') as f:
-        #     entry = pickle.load(f)
-        # self.msgDictHex = entry['msgDictHex']
-        # print ('msg get ',self.msgDictHex)
-        # self.msgDictStr = entry['msgDictStr']
-        # self.sendmsgrec = entry['sendmsgrec']
-        # self.entry = entry
         msgset = MsgSet()
         self.msgDictHex =msgset.getHexMsg()
         print('msg hex,', self.msgDictHex)
@@ -92,7 +75,7 @@ class ModelCore(threading.Thread, QObject):
 
 
 
-    def stop(self):
+    def close(self):
         '''
         Stop thread.
         '''
@@ -102,7 +85,6 @@ class ModelCore(threading.Thread, QObject):
             self.ser.timeout = 0
             # change to non blocking mode and then close
             self.ser.close()
-
             self.ser = serial.Serial(baudrate=self.br, timeout=120)
         # self.ser = None
         self.running = False
@@ -160,11 +142,14 @@ class ModelCore(threading.Thread, QObject):
         # print('iser open', self.ser.isOpen())
         self.printShow('ser=',self.ser)
 
-    def reSetPort(self):
+
+    def reSetPort(self, port = False):
         try:
             print('reSetPort:',self.ser)
-            self.ser = serial.Serial(self.port, self.br, timeout=120)
-            # self.printShow(self.ser,text=False)
+            if port:
+                self.ser = serial.Serial(port, self.br, timeout=120)
+            else:
+                self.ser = serial.Serial(self.port, self.br, timeout=120)
             self.printShow('port is open port name is ',self.port)
         except serial.serialutil.SerialException:
             self.printShow('=== can not open the port ===')

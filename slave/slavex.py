@@ -39,7 +39,7 @@ class SlaveX(SerialModel):
 
     def _analysisbit(self):
         bitlist = list()
-        while True:
+        while self.running:
             databit = self._readBit()
             if databit == b'\xeb':
                 databit = self._readBit()
