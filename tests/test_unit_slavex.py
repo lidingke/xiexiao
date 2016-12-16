@@ -15,11 +15,15 @@ class SlaveXTest(unittest.TestCase):
         self.testthread.setPort('com15',9600)
         self.source = SlaveX()
         self.source.start()
+        self.source.setPort('com16',9600)
 
     def test_slave_port_open(self):
-
+        assert hasattr(self.testthread,'ser')
+        assert hasattr(self.testthread.ser,'port')
+        assert isinstance(self.testthread.ser, serial.Serial)
+        assert self.testthread.ser.port == self.testthread.port
         assert self.source.ser.port == self.source.port
-        assert self.testthread.port == self.testthread.port
+
 
 
     def test_serial_source_write(self):

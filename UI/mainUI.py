@@ -110,7 +110,7 @@ class Ui_Form(object):
         self.setCurrent.setObjectName("setCurrent")
         self.gridLayout_5.addWidget(self.setCurrent, 1, 1, 1, 2)
         self.currentSpin = QtWidgets.QSpinBox(self.layoutWidget_3)
-        self.currentSpin.setMaximum(500)
+        self.currentSpin.setMaximum(10000)
         self.currentSpin.setSingleStep(50)
         self.currentSpin.setObjectName("currentSpin")
         self.gridLayout_5.addWidget(self.currentSpin, 0, 2, 1, 1)

@@ -59,7 +59,7 @@ class ModelPump(ModelCore,QObject):
     def setCurrent(self, current):
         current = int(current)
         msg = self.msgDictHex['setcurrent']
-        msg = msg[:5] + current.to_bytes(2, 'little') + msg[7:]
+        msg = msg[:5] + current.to_bytes(2, 'big') + msg[7:]
         self.write(msg)
 
     def analysisbit(self):
@@ -216,15 +216,16 @@ class plotDataContainer(object):
         self.loggedAxis = ([],[],[])
         self.__tabState = False
         self.__startLog = False
-        self.beginPlotTime = 0
+        self.beginPlotTime = time.time()
         self.beginLogTime = False
 
 
 
     def get(self, x, y1, y2):
-        if len(self.dynamicAxis[0]) == 0:
-            self.beginTime = x
+        if len(self.dynamicAxis[0]) < 1:
+            self.beginPlotTime = x
         self.dynamicAxis[0].append(x-self.beginPlotTime)
+        print('begintime?', x, self.beginPlotTime)
         self.dynamicAxis[1].append(y1)
         self.dynamicAxis[2].append(y2)
         if self.__startLog == True:
@@ -320,16 +321,20 @@ class TempDetector(object):
         sensitivity = init_sen +(temp-stand_temp)*correct_sen
 
         voltage = (voltage*1000-8.977)/346.34
-        if voltage < 0:
-            print("voltage < 0")
-            voltage = 0.000001
+        if voltage < 0.0001:
+            # print("voltage < 0")
+            voltage = 0.0001
         #Φ = U/Z
         power = voltage/sensitivity
         #voltage 为探测器输出电压，单位是V，sensitivity 为探测器的灵敏度，单位是mV/W
+        #power单位是mw?
+        if power < 0.0001:
+            power = 0.0001
         return power
 
+    #1423
     def hex2power1(self,data = b''):
-        heat = int().from_bytes(data[1:3],'little')/100
+        heat = int().from_bytes(data[3:5],'little')/100
         getPower = int().from_bytes(data[5:7],'little')
         getPower = (getPower/4096)*3
         tmPower = self.getPower(heat,getPower)
@@ -337,7 +342,7 @@ class TempDetector(object):
 
 
     def hex2power2(self, data=b''):
-        heat = int().from_bytes(data[3:5], 'little') / 100
+        heat = int().from_bytes(data[1:3], 'little') / 100
         getPower = int().from_bytes(data[7:9], 'little')
         getPower = (getPower / 4096) * 3
         tmPower = self.getPower(heat, getPower)
@@ -376,9 +381,10 @@ class DataSaveTick(threading.Thread,QObject):
         datalist1 = []
         datalist2 = []
         for x in getlist:
-            # pass
+            # power: 14,23
             power1 = self.detector.hex2power1(x[1])
             power2 = self.detector.hex2power2(x[1])
+
             # datalist.append([power,x[0],x[1]])
             datalist1.append(power1)
             datalist2.append(power2)

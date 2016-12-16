@@ -77,7 +77,7 @@ class SlaveX(SerialModel):
                 elif data[4:5] == b'\x00':
                     self.isOpen = False
             elif data[1:2] == b'\x01':
-                self.current =  int().from_bytes(data[3:5],'little')
+                self.current =  int().from_bytes(data[3:5],'big')
                 print ('get current', self.current)
                 #current
 

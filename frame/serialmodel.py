@@ -22,7 +22,6 @@ class SerialModel(threading.Thread):
 
         if port:
             self.ser = serial.Serial(port = port, baudrate=baundrate, timeout=120)
-            print('get ser', self.ser)
         else:
             self.ser = serial.Serial(baudrate=baundrate, timeout=120)
 

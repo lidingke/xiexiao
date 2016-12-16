@@ -216,7 +216,7 @@
               <string>mA</string>
              </property>
              <property name="maximum">
-              <number>500</number>
+              <number>10000</number>
              </property>
              <property name="singleStep">
               <number>50</number>

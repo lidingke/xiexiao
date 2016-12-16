@@ -18,6 +18,11 @@ class TestModelCore(TestCase):
     #
     def test_closePort(self):
         self.model.reSetPort('com15')
+        # pass
+        
+
+    def tearDown(self):
+        self.model.close()
     #
     # def test_write(self):
     #     self.fail()

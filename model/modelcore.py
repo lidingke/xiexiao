@@ -83,10 +83,8 @@ class ModelCore(threading.Thread, QObject):
 
         if self.ser:
             self.ser.timeout = 0
-            # change to non blocking mode and then close
             self.ser.close()
             self.ser = serial.Serial(baudrate=self.br, timeout=120)
-        # self.ser = None
         self.running = False
 
 
@@ -145,7 +143,7 @@ class ModelCore(threading.Thread, QObject):
 
     def reSetPort(self, port = False):
         try:
-            print('reSetPort:',self.ser)
+            # print('reSetPort:',self.ser)
             if port:
                 self.ser = serial.Serial(port, self.br, timeout=120)
             else:
