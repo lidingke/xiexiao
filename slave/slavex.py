@@ -8,7 +8,6 @@ class SlaveX(SerialModel):
 
     def __init__(self, ):
         super(SlaveX, self).__init__()
-        # self.arg = arg
         self.isOpen = True
         self.currentIndex = 0
         self.current = 0
@@ -81,7 +80,6 @@ class SlaveX(SerialModel):
                 print ('get current', self.current)
                 #current
 
-        pass
 
     def _currentMsg(self):
         tp = self._randomCurrent()
@@ -90,8 +88,12 @@ class SlaveX(SerialModel):
     def _randomCurrent(self):
         temp1 = int(100*(23 + random.uniform(2,10))).to_bytes(2, 'little')
         temp2 = int(100*(24 + random.uniform(2,10))).to_bytes(2, 'little')
-        power1 = int(10*(self.current * random.uniform(2,10))).to_bytes(2, 'little')
-        power2 = int(10*(self.current * random.uniform(2,10))).to_bytes(2, 'little')
+        try:
+            power1 = int(10*(self.current * random.uniform(2,10))).to_bytes(2, 'little')
+            power2 = int(10*(self.current * random.uniform(2,10))).to_bytes(2, 'little')
+        except OverflowError:
+            power1 = b'\xFF\xFF'
+            power2 = b'\xFF\xFF'
         return (temp1, temp2, power1, power2)
 
 if __name__ == '__main__':

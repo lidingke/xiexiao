@@ -11,13 +11,12 @@ import collections
 # from dataSaveTick import DataSaveTick
 import queue
 import math
-
+from model.loadjson import WriteReadJson
 
 class ModelPump(ModelCore,QObject):
     """docstring for ModelPump"""
     emitPlot = pyqtSignal(object, object, object)
     beginPlot = pyqtSignal(object)
-    # to view.setPowerShowDict
     updatePowerShow = pyqtSignal(object, object)
 
     def __init__(self,):
@@ -89,6 +88,7 @@ class ModelPump(ModelCore,QObject):
                     databit = self.readbit(self.ser)
                     if databit == b'\xA9':
                         data = b''.join(bitlist)
+                        print('get data',b'\x9A' + data + b'\xA9')
                         return b'\x9A' + data + b'\xA9'
                     bitlist.append(databit)
 
@@ -225,7 +225,7 @@ class plotDataContainer(object):
         if len(self.dynamicAxis[0]) < 1:
             self.beginPlotTime = x
         self.dynamicAxis[0].append(x-self.beginPlotTime)
-        print('begintime?', x, self.beginPlotTime)
+        # print('begintime?', x, self.beginPlotTime)
         self.dynamicAxis[1].append(y1)
         self.dynamicAxis[2].append(y2)
         if self.__startLog == True:
@@ -285,12 +285,6 @@ class plotDataContainer(object):
 
 
 
-
-
-
-
-
-
 class TempDetector(object):
     '''
     型号         |T0 【℃】| Z0 【mV/W】| Zc【（mV/W）/℃】
@@ -319,15 +313,15 @@ class TempDetector(object):
         # temp = self.poly(temp)
         # Z = Z0 +（T-T0）*Zc
         sensitivity = init_sen +(temp-stand_temp)*correct_sen
-
-        voltage = (voltage*1000-8.977)/346.34
+        # voltage = (voltage*1000-8.977)/346.34
+        voltage = voltage * 1000 * 0.0035 + 0.0315
         if voltage < 0.0001:
             # print("voltage < 0")
             voltage = 0.0001
-        #Φ = U/Z
+        # Φ = U/Z
         power = voltage/sensitivity
-        #voltage 为探测器输出电压，单位是V，sensitivity 为探测器的灵敏度，单位是mV/W
-        #power单位是mw?
+        # voltage 为探测器输出电压，单位是V，sensitivity 为探测器的灵敏度，单位是mV/W
+        # power单位是mw?
         if power < 0.0001:
             power = 0.0001
         return power
@@ -348,11 +342,72 @@ class TempDetector(object):
         tmPower = self.getPower(heat, getPower)
         return tmPower
 
+class PowerDetector(object):
+    '''
+    :param detect is detect type
+    :param serialNo is detect number or name, like vertical or inclined
+    型号         |T0 【℃】| Z0 【mV/W】| Zc【（mV/W）/℃】
+    B01-SMC| 20℃         | 50.3                | 0.088
+    B05-SMC| 20℃         | 134.2              | 0.235
+    C50-MC   | 20℃        | 0.59775          | 0.000747
+    给出的temp实际上是电阻值单位kΩ，
+    给出的功率power实际上是电压值单位为V'''
+
+    def __init__(self, detect = 'C50-MC', serialNo = 'vertical'):
+        object.__init__(self)
+        para = {
+        'B01-SMC': [20,50.3,0.088],
+        'B05-SMC': [20,134.2,0.235],
+        'C50-MC':   [20,0.59775,0.000747]}
+        self.parameter = para[detect]
+
+        self.slope, self.intercept = self._fitParaGet(serialNo)
+
+    def _fitParaGet(self, serialNo):
+        wrjson = WriteReadJson('data\\detector.json')
+        jsonget = wrjson.load()
+        if serialNo not in jsonget.keys():
+            raise ValueError('detector json key error')
+        paradict = jsonget.get(serialNo, {})
+        if not paradict:
+            raise ValueError('detector json parameter error')
+        slope = paradict.get('slope', 0.0035)
+        intercept = paradict.get('intercept', 0.0315)
+        return slope, intercept
+
+    def getPower(self, temp = 0, voltage = 0,):
+        stand_temp, init_sen, correct_sen = self.parameter
+        # temp = self.poly(temp)
+        # Z = Z0 +（T-T0）*Zc
+        sensitivity = init_sen +(temp-stand_temp)*correct_sen
+        # voltage = (voltage*1000-8.977)/346.34
+        voltage = voltage * 1000
+        voltage = voltage * self.slope + self.intercept
+        # if voltage < 0.0001:
+        #     print("voltage < 0")
+        #     voltage = 0.0001
+        #Φ = U/Z
+        power = voltage/sensitivity
+        #voltage 为探测器输出电压，单位是V，sensitivity 为探测器的灵敏度，单位是mV/W
+        #power单位是mw?
+        if power < 0.0001:
+            power = 0.0001
+        return power
+
+    #1423
+    def hex2power(self, heat, power):
+        if not (isinstance(heat, bytes) or isinstance(power,bytes)):
+            raise ValueError('para input error')
+        heat = int().from_bytes(heat, 'little') / 100
+        getPower = int().from_bytes(power, 'little')
+        getPower = (getPower / 4096) * 3
+        tmPower = self.getPower(heat, getPower)
+        return tmPower
 
 
 class DataSaveTick(threading.Thread,QObject):
     """docstring for DataSaveTick
-    need a input dict which hold the dataqueue,
+    need a input dict which hold the data queue,
     pass the list to process and return a new list to get new data
     """
     resultEmite = pyqtSignal(object, object)
@@ -364,7 +419,8 @@ class DataSaveTick(threading.Thread,QObject):
         self.daemon = True
         self.tick = ticktime
         self.dataGet = dataGetDict
-        self.detector = TempDetector()
+        self.detector1 = PowerDetector(serialNo='inclined')
+        self.detector2 = PowerDetector(serialNo='vertical')
 
     def run(self):
         '''rewrite this run() for a clock
@@ -382,19 +438,24 @@ class DataSaveTick(threading.Thread,QObject):
         datalist2 = []
         for x in getlist:
             # power: 14,23
-            power1 = self.detector.hex2power1(x[1])
-            power2 = self.detector.hex2power2(x[1])
+            # print('len', len(x), x)
+            if len(x[1]) < 9 :
+                return
+                # raise ValueError('x length error')
+            power1 = self.detector1.hex2power(x[1][3:5],x[1][5:7])
+            power2 = self.detector2.hex2power(x[1][1:3],x[1][7:9])
 
             # datalist.append([power,x[0],x[1]])
             datalist1.append(power1)
             datalist2.append(power2)
         datalist1.sort()
         datalist2.sort()
-
-        dataLen1 = len(datalist1)
-        powerresult1 = sum(datalist1[1:dataLen1-1])/(dataLen1 - 2)
-        dataLen2 = len(datalist2)
-        powerresult2 = sum(datalist2[1:dataLen2-1])/(dataLen2 - 2)
+        end = int(len(datalist1) * 0.2)
+        dataLen1 = len(datalist1[end:-end])
+        powerresult1 = sum(datalist1)/(dataLen1)
+        end = int(len(datalist2) * 0.1)
+        dataLen2 = len(datalist2[end:-end])
+        powerresult2 = sum(datalist2)/(dataLen2)
         getlist.clear()
         # print ('power result', powerresult)
         self.emitPower(powerresult1, powerresult2)
