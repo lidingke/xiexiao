@@ -93,11 +93,15 @@ class View(QWidget):
         def openEvent():
             self.tabBoxUI.closePort.setEnabled(True)
             self.tabBoxUI.openPort.setEnabled(False)
+            self.tabBoxUI.baundrate.setEnabled(False)
+            self.tabBoxUI.port.setEnabled(False)
             self.tabBoxUI.tabBox.setTabEnabled(2, True)
         self.tabBoxUI.openPort.clicked.connect(openEvent)
         def closeEvent():
             self.tabBoxUI.closePort.setEnabled(False)
             self.tabBoxUI.openPort.setEnabled(True)
+            self.tabBoxUI.port.setEnabled(True)
+            self.tabBoxUI.baundrate.setEnabled(True)
             self.tabBoxUI.tabBox.setTabEnabled(2, False)
         self.tabBoxUI.closePort.clicked.connect(closeEvent)
 
@@ -210,7 +214,10 @@ class View(QWidget):
         vchangebox = ValueChanged(getCurrentIndex)
         vchangebox.changed.connect(startlog)
         # self.tabBoxUI.tabBox.isTabChanged.connect(startlog)
-    #
+
+    def setLabWarning(self, dirlabel, msg):
+        if dirlabel == 'port':
+            self.tabBoxUI.portStatus.setText(msg)
 
     def _tabBoxStateManager(self, state, para):
         if state == 'openPort':

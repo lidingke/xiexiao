@@ -138,7 +138,7 @@ class ModelCore(threading.Thread, QObject):
         self.ser = serial.Serial(baudrate=self.br, timeout=120)
         # self.ser = None
         # print('iser open', self.ser.isOpen())
-        self.printShow('ser=',self.ser)
+        # self.printShow('ser=',self.ser)
 
 
     def reSetPort(self, port = False):
@@ -148,9 +148,9 @@ class ModelCore(threading.Thread, QObject):
                 self.ser = serial.Serial(port, self.br, timeout=120)
             else:
                 self.ser = serial.Serial(self.port, self.br, timeout=120)
-            self.printShow('port is open port name is ',self.port)
+            # self.printShow('port is open port name is ',self.port)
         except serial.serialutil.SerialException:
-            self.printShow('=== can not open the port ===')
+            # self.printShow('=== can not open the port ===')
             self.ser = serial.Serial(baudrate=self.br, timeout=120)
             # self.printShow('ser=',self.ser)
 

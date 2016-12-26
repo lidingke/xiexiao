@@ -18,6 +18,7 @@ class ModelPump(ModelCore,QObject):
     emitPlot = pyqtSignal(object, object, object)
     beginPlot = pyqtSignal(object)
     updatePowerShow = pyqtSignal(object, object)
+    updateLabelWarning = pyqtSignal(object, object)
 
     def __init__(self,):
         super(ModelPump, self).__init__()
@@ -27,7 +28,7 @@ class ModelPump(ModelCore,QObject):
         self.showPower2Data = {'logNumber': 0}
         self.plotData = plotDataContainer()
         self.timebegin = False
-        self.tempdetector = TempDetector()
+        # self.tempdetector = TempDetector()
         self.logTimeStep = 1
         self.dataGetDict = {'dataGet': []}
         self.datasaveTick = DataSaveTick(self.logTimeStep, self.dataGetDict)
@@ -41,7 +42,15 @@ class ModelPump(ModelCore,QObject):
         self.set_br(int(baudrate))
         self.set_port(port)
         self.reSetPort()
-        print('ser', self.ser)
+        msg = '串口号：{}，开关状态：{}'.format(self.ser.name,self.ser.is_open)
+        self._viewWarning('port',msg)
+
+
+    def closePort(self):
+        super(ModelPump, self).closePort()
+        msg = '串口号：{}，开关状态：{}'.format(self.ser.name,self.ser.is_open)
+        self._viewWarning('port',msg)
+
 
     def openPlatform(self):
         self.plotData.setState('port')
@@ -205,6 +214,12 @@ class ModelPump(ModelCore,QObject):
                 self.plotData.setState('port')
 
 
+    def _viewWarning(self, dirlabel, msg):
+        print('isinstance', isinstance(dirlabel, str), isinstance(msg, str))
+        if not isinstance(dirlabel, str) and isinstance(msg, str):
+            raise ValueError('view warning input parameter')
+        self.updateLabelWarning.emit(dirlabel,msg)
+
 class plotDataContainer(object):
     '''
     This object contain two list need to plot,
@@ -285,62 +300,6 @@ class plotDataContainer(object):
 
 
 
-class TempDetector(object):
-    '''
-    型号         |T0 【℃】| Z0 【mV/W】| Zc【（mV/W）/℃】
-    B01-SMC| 20℃         | 50.3                | 0.088
-    B05-SMC| 20℃         | 134.2              | 0.235
-    C50-MC   | 20℃        | 0.59775          | 0.000747
-    给出的temp实际上是电阻值单位kΩ，
-    给出的功率power实际上是电压值单位为V'''
-
-    def __init__(self, detect = 'C50-MC'):
-        super(TempDetector, self).__init__()
-        para = {
-        'B01-SMC': [20,50.3,0.088],
-        'B05-SMC': [20,134.2,0.235],
-        'C50-MC':   [20,0.59775,0.000747]
-        }
-        getpara = para[detect]
-        self.stand_temp = getpara[0]
-        self.init_sen = getpara[1]
-        self.correct_sen = getpara[2]
-
-    def getPower(self, temp = 0, voltage = 0,):
-        stand_temp= self.stand_temp
-        init_sen = self.init_sen
-        correct_sen = self.correct_sen
-        # temp = self.poly(temp)
-        # Z = Z0 +（T-T0）*Zc
-        sensitivity = init_sen +(temp-stand_temp)*correct_sen
-        # voltage = (voltage*1000-8.977)/346.34
-        voltage = voltage * 1000 * 0.0035 + 0.0315
-        if voltage < 0.0001:
-            # print("voltage < 0")
-            voltage = 0.0001
-        # Φ = U/Z
-        power = voltage/sensitivity
-        # voltage 为探测器输出电压，单位是V，sensitivity 为探测器的灵敏度，单位是mV/W
-        # power单位是mw?
-        if power < 0.0001:
-            power = 0.0001
-        return power
-
-    #1423
-    def hex2power1(self,data = b''):
-        heat = int().from_bytes(data[3:5],'little')/100
-        getPower = int().from_bytes(data[5:7],'little')
-        getPower = (getPower/4096)*3
-        tmPower = self.getPower(heat,getPower)
-        return tmPower
-
-
-    def hex2power2(self, data=b''):
-        heat = int().from_bytes(data[1:3], 'little') / 100
-        getPower = int().from_bytes(data[7:9], 'little')
-        getPower = (getPower / 4096) * 3
-        tmPower = self.getPower(heat, getPower)
-        return tmPower
 
 class PowerDetector(object):
     '''
@@ -383,6 +342,7 @@ class PowerDetector(object):
         # voltage = (voltage*1000-8.977)/346.34
         voltage = voltage * 1000
         voltage = voltage * self.slope + self.intercept
+        print('get slope', self.slope, self.intercept)
         # if voltage < 0.0001:
         #     print("voltage < 0")
         #     voltage = 0.0001

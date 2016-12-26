@@ -45,12 +45,14 @@ class Presenter(QObject):
         #plot signal
         self.pumpModel.updatePowerShow.connect(self.__view.setPowerShowDict)
         self.pumpModel.emitPlot.connect(self.__view.updataFigure)
+        self.pumpModel.updateLabelWarning.connect(self.__view.setLabWarning)
         # self.pumpModel.beginPlot.connect(self.__view.painter.clearPlotList)
         self.__view.powerLog.emitBeginTime.connect(self.pumpModel.setStartTime)
         self.__view.powerLog.logButton.clicked.connect(self.pumpModel.setBeginPlotTime)
         self.__view.powerLog.emitSqlTableName.connect(self.pumpModel.createTable)
         self.__view.powerLog.emitLogStartOrStop.connect(self.pumpModel.setLogStartOrStop)
         self.__view.emitTabBoxStatus.connect(self.pumpModel.plotStateGettedManager)
+
         ## self.__view.emitUsername.connect(self.pumpModel.setUsername)
         ## self.__view.setbaundratePump.connect(self.pumpModel.baundrateIndexChange)
         ## self.__view.setportPump.connect(self.pumpModel.portPump)
@@ -72,14 +74,17 @@ class Presenter(QObject):
         self.pumpModel.setCurrent(current)
 
 
-    def closePort(self,model):
-        # canState = self.__view.enableClosePort()
-        canState = True
-        if canState:
-            model.closePort()
-            self.__view.afterClosePort()
-        else:
-            print('未成功关闭')
+    # def closePort(self,model):
+    #     # canState = self.__view.enableClosePort()
+    #     canState = True
+    #     if canState:
+    #         model.closePort()
+    #         print('after close port', model.ser.name, model.ser.is_open, model.ser)
+    #         msg = '关闭串口号：{}，开关状态：{}'.format(model.ser.name, model.ser.is_open)
+    #         model._viewWarning('port', msg)
+    #         # self.__view.afterClosePort()
+    #     else:
+    #         print('未成功关闭')
 
     def end_cmd(self):
         if self.pumpModel:
