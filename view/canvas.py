@@ -38,6 +38,8 @@ class TwoLinePlot(MyMplCanvas):
     def update_figure(self):
         self.axes.plot(self.xlist, self.y1list, 'r', \
                        self.xlist, self.y2list, 'b')
+        # print(dir(self.axes))
+        self.axes.set_ylim(0,15)
         self.axes.set_xlabel('Time(s)\n')
         self.axes.set_ylabel('Power(W)')
         self.axes.grid(True)
