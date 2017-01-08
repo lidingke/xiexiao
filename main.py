@@ -1,6 +1,7 @@
 # coding=utf-8
 
-
+from setting.orderset import SETTING
+SETTING("test")
 import sys
 # import
 # sys.path.append("..")

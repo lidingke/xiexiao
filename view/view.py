@@ -1,3 +1,5 @@
+from setting.orderset import SETTING
+SETTING('')
 #qt tool
 from PyQt5.QtWidgets    import (QWidget, QVBoxLayout,
     QHBoxLayout, QPlainTextEdit, QApplication, QLineEdit, QSizePolicy)
@@ -21,6 +23,7 @@ from frame.lastlog import LastLog
 # from view.user import User
 # from model.lastlog import LastLog
 import threading
+from util.load import WRpickle
 
 
 class View(QWidget):
@@ -192,7 +195,12 @@ class View(QWidget):
     def closeEvent(self, event):
         self.lastLogSave()
         print('last log ',self.lastLog)
+        wr = WRpickle("tests\\data\\datasforfilter.pickle")
+        wr.loadPick()
+        # print(SETTING()["vertical"],id(SETTING()["vertical"]))
+        wr.savePick((SETTING()["vertical"],SETTING()["inclined"]))
         QWidget.closeEvent(self, event)
+
 
     def _initTabStateChange(self):
         def openport():
@@ -226,6 +234,10 @@ class View(QWidget):
             self.emitTabBoxStatus.emit(state, para)
         elif state == 'startLog':
             self.emitTabBoxStatus.emit(state, para)
+
+    # def closeEvent(self,event):
+
+
 
 
 class ValueChanged(QObject):

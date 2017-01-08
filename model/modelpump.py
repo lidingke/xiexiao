@@ -1,9 +1,12 @@
 from __future__ import division
+from setting.orderset import SETTING
+SETTING("")
 from .modelcore import ModelCore
 from PyQt5.QtCore import pyqtSignal, QObject
 import threading
 import time
 from .database import DataHand
+from .filter import Filter
 
 import pdb
 from model.toolkit import HexSplit
@@ -65,10 +68,22 @@ class ModelPump(ModelCore,QObject):
 
 
     def setCurrent(self, current):
-        current = int(current)
+        ratio = self._fitParaGet("currentRatio")
+        print('get current ratio', ratio)
+        current = int(current/ratio)
+        # current = 0.214 * current + 5.4955
+        # current = int(current)
         msg = self.msgDictHex['setcurrent']
         msg = msg[:5] + current.to_bytes(2, 'big') + msg[7:]
         self.write(msg)
+
+    def _fitParaGet(self, serialNo):
+        wrjson = WriteReadJson('data\\detector.json')
+        jsonget = wrjson.load()
+        if serialNo not in jsonget.keys():
+            raise ValueError('detector json key error')
+        ratio = jsonget.get(serialNo, 10)
+        return ratio
 
     def analysisbit(self):
         '''
@@ -197,7 +212,7 @@ class ModelPump(ModelCore,QObject):
         self.beginPlot.emit(True)
         # self.plotData.setLogReStart(True)
 
-    def setStartTime(self,begintime, steptime):
+    def setStartTime(self, begintime, steptime):
         self.timebegin = begintime
         self.datasaveTick.tick = steptime
 
@@ -300,7 +315,7 @@ class plotDataContainer(object):
 
 
 
-
+import  logging
 class PowerDetector(object):
     '''
     :param detect is detect type
@@ -319,7 +334,10 @@ class PowerDetector(object):
         'B05-SMC': [20,134.2,0.235],
         'C50-MC':   [20,0.59775,0.000747]}
         self.parameter = para[detect]
-
+        logging.basicConfig(filename="data\\modelog.txt", filemode='a', level=logging.ERROR,
+                            format="%(asctiem)s-%(levelname)s-%(funcName):%(message)s")
+        SETTING()[serialNo] = []
+        self.powerlist = SETTING()[serialNo]
         self.slope, self.intercept = self._fitParaGet(serialNo)
 
     def _fitParaGet(self, serialNo):
@@ -336,25 +354,25 @@ class PowerDetector(object):
 
     def getPower(self, temp = 0, voltage = 0,):
         stand_temp, init_sen, correct_sen = self.parameter
-        # temp = self.poly(temp)
         # Z = Z0 +（T-T0）*Zc
         sensitivity = init_sen +(temp-stand_temp)*correct_sen
         # voltage = (voltage*1000-8.977)/346.34
         voltage = voltage * 1000
-        voltage = voltage * self.slope + self.intercept
-        print('get slope', self.slope, self.intercept)
-        # if voltage < 0.0001:
-        #     print("voltage < 0")
-        #     voltage = 0.0001
+        if voltage < 10:
+            power = 0.0001
+            return power
+        voltage = voltage/sensitivity * self.slope + self.intercept
         #Φ = U/Z
-        power = voltage/sensitivity
+        power = voltage / 500
+        # self.powerlist.append(power)
         #voltage 为探测器输出电压，单位是V，sensitivity 为探测器的灵敏度，单位是mV/W
-        #power单位是mw?
+        #power单位是w
+
         if power < 0.0001:
             power = 0.0001
         return power
 
-    #1423
+    #1423 改为1324
     def hex2power(self, heat, power):
         if not (isinstance(heat, bytes) or isinstance(power,bytes)):
             raise ValueError('para input error')
@@ -379,8 +397,8 @@ class DataSaveTick(threading.Thread,QObject):
         self.daemon = True
         self.tick = ticktime
         self.dataGet = dataGetDict
-        self.detector1 = PowerDetector(serialNo='inclined')
-        self.detector2 = PowerDetector(serialNo='vertical')
+        self.detector1 = PowerDetector(serialNo='inclined')#24
+        self.detector2 = PowerDetector(serialNo='vertical')#13
 
     def run(self):
         '''rewrite this run() for a clock
@@ -397,30 +415,33 @@ class DataSaveTick(threading.Thread,QObject):
         datalist1 = []
         datalist2 = []
         for x in getlist:
-            # power: 14,23
-            # print('len', len(x), x)
             if len(x[1]) < 9 :
                 return
                 # raise ValueError('x length error')
-            power1 = self.detector1.hex2power(x[1][3:5],x[1][5:7])
-            power2 = self.detector2.hex2power(x[1][1:3],x[1][7:9])
-
+            power1 = self.detector1.hex2power(x[1][3:5],x[1][7:9])
+            power2 = self.detector2.hex2power(x[1][1:3],x[1][5:7])
             # datalist.append([power,x[0],x[1]])
             datalist1.append(power1)
             datalist2.append(power2)
-        datalist1.sort()
-        datalist2.sort()
-        end = int(len(datalist1) * 0.2)
-        dataLen1 = len(datalist1[end:-end])
-        powerresult1 = sum(datalist1)/(dataLen1)
-        end = int(len(datalist2) * 0.1)
-        dataLen2 = len(datalist2[end:-end])
-        powerresult2 = sum(datalist2)/(dataLen2)
+        powerresult1 = self._powerfiter(datalist1)
+        powerresult2 = self._powerfiter(datalist2)
         getlist.clear()
         # print ('power result', powerresult)
         self.emitPower(powerresult1, powerresult2)
 
+    def _powerfiter(self,datalist):
+        if len(datalist) < 5:
+            return 0.0
+        datalist.sort()
+        end = int(len(datalist) * 0.2)
+        dataLen1 = len(datalist[end:-end])
+        powerresult = sum(datalist)/(dataLen1)
+        powerresult = round(powerresult,1)
+        print('get power', powerresult)
+        return powerresult
+
+
+
 
     def emitPower(self,powerresult1, powerresult2):
-        # pass
         self.resultEmite.emit(powerresult1, powerresult2)

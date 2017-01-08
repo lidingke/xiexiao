@@ -55,7 +55,7 @@
          </size>
         </property>
         <property name="currentIndex">
-         <number>0</number>
+         <number>2</number>
         </property>
         <widget class="QWidget" name="userTab">
          <attribute name="title">
@@ -223,10 +223,10 @@
               <string>mA</string>
              </property>
              <property name="maximum">
-              <number>10000</number>
+              <number>7500</number>
              </property>
              <property name="singleStep">
-              <number>50</number>
+              <number>500</number>
              </property>
             </widget>
            </item>

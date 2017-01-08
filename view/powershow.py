@@ -58,10 +58,10 @@ class PowerShow(QWidget):
         self.update()
 
     def __Power2str(self,data):
-        if data > 0.1:
-            return str(round(data,2))+'W'
+        if data > 0.05:
+            return str(round(data,1)) +'W'
         else:
-            return str(round(data*1000,2)) + 'mW'
+            return str(round(data*1000,1)) + 'mW'
 
 
 if __name__ == '__main__':
