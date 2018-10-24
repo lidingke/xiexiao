@@ -22,8 +22,8 @@ from model.database import DataHand
 class PowerRecord(QWidget,RecodUI):
     """docstring for PowerRecord"""
 
-    beginTimeSignal = pyqtSignal(object,object)
-    sqlTableName = pyqtSignal(object)
+    emitBeginTime = pyqtSignal(object, object)
+    emitSqlTableName = pyqtSignal(object)
     emitLogStartOrStop = pyqtSignal(object)
     # timeStateSignal = pyqtSignal(object)
     # logStateSignal = pyqtSignal(object)
@@ -82,7 +82,7 @@ class PowerRecord(QWidget,RecodUI):
         print('getitem',item)
         #get nowtable
         self.tableName = item
-        self.sqlTableName.emit(self.tableName)
+        self.emitSqlTableName.emit(self.tableName)
         temp = item.split('US')
         self.userID = temp[1]
         self.timeTick = temp[2:]
@@ -125,7 +125,7 @@ class PowerRecord(QWidget,RecodUI):
         if rep.saveOrcancel == 'save':
             print('pickContext',self.pickContext.pickContext)
             printer = PdfCreater(self,)
-            self.sqlTableName.connect(printer.getDBData)
+            self.emitSqlTableName.connect(printer.getDBData)
             printer.saveToFile()
         # printer.savePdf()
 
@@ -158,7 +158,7 @@ class PowerRecord(QWidget,RecodUI):
             self.beginTime = time.time()
             print('stepEdit',self.stepEdit.text()[:-1],'beginTime:',self.beginTime)
             # emit to model.setStartTime
-            self.beginTimeSignal.emit(self.beginTime, self.timeStep)
+            self.emitBeginTime.emit(self.beginTime, self.timeStep)
             self.emitLogStartOrStop.emit(True)
             # self.timeStateSignal.emit(self.timeLong)
             self.ticker.startTick(self.timeLong)
@@ -221,7 +221,7 @@ class PowerRecord(QWidget,RecodUI):
         username = self.userID
         localTime = str(int(localTime))
         tableName='TM'+localTime+'US'+username
-        self.sqlTableName.emit(tableName)
+        self.emitSqlTableName.emit(tableName)
 
     def timerSave(self):
         beginTime =self.beginTime

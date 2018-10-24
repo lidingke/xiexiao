@@ -6,8 +6,6 @@ from PyQt5.QtCore import Qt, QObject, pyqtSignal
 #python tool
 import time
 from queue              import Queue
-import sys
-sys.path.append("..")
 import pdb
 
 # from UI.portGBUI import Ui_GroupBox as PortGBUI
@@ -17,9 +15,9 @@ import pdb
 from UI.mainUI import Ui_Form as TabBoxUI
 
 
-from view.canvas import TwoLinePlot
-from view.powershow import PowerShow
-from view.user import UserView
+from .canvas import TwoLinePlot
+from .powershow import PowerShow
+from .user import UserView
 from frame.lastlog import LastLog
 # from view.powerrecord import PowerRecord
 # from view.user import User

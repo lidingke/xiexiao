@@ -177,7 +177,7 @@ class ModelPump(ModelCore,QObject):
         self.plotData.setLogReStart(isture)
         # print('set startRecord:',self.startRecord)
 
-    def creatPlot(self,tableName):
+    def createTable(self, tableName):
         data = self.datahand.getTableData(tableName)
         self.datahand.createPlot(data)
 
